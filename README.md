@@ -1,4 +1,4 @@
-# SCBench
+# scBench
 
 **Can AI agents analyze real-world single-cell data?**
 
@@ -83,12 +83,7 @@ See [eval-graders](https://github.com/latchbio/eval-graders) for implementations
 ## Citation
 
 ```bibtex
-@article{scbench2025,
-  title = {SCBench: Can Agents Analyze Real-World Single-Cell Data?},
-  author = {Workman, Kenny and Yang, Zhen and Muralidharan, Harihara and Le, Hannah},
-  year = {2025},
-  url = {https://github.com/latchbio/scbench}
-}
+TODO
 ```
 
 ## License

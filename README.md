@@ -47,7 +47,7 @@ scbench validate evals_canonical/chromium/chromium_qc_4T1_filter_cells.json
 
 # Run with mini-swe-agent
 export ANTHROPIC_API_KEY=your_key
-scbench run evals_canonical/chromium/chromium_qc_4T1_filter_cells.json --agent minisweagent
+scbench run evals_canonical/chromium/chromium_qc_4T1_filter_cells.json --agent minisweagent --model anthropic/claude-opus-4-5
 ```
 
 ### Custom Agent

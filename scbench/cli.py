@@ -9,21 +9,23 @@ from scbench import EvalRunner, TestCase
 from latch_eval_tools.harness import run_minisweagent_task, run_claudecode_task, run_openaicodex_task, batch_download_datasets
 
 
+agent_registry = {
+    "minisweagent": ("mini-swe-agent", run_minisweagent_task),
+    "claudecode": ("Claude Code", run_claudecode_task),
+    "openaicodex": ("OpenAI Codex", run_openaicodex_task),
+}
+
+
 def _run_single_eval(eval_file_path, agent, model, keep_workspace, run_id=None):
     eval_file = Path(eval_file_path)
     start_time = time.time()
 
-    if agent == "minisweagent":
-        def agent_fn(task_prompt, work_dir):
-            return run_minisweagent_task(task_prompt, work_dir, model_name=model)
-    elif agent == "claudecode":
-        def agent_fn(task_prompt, work_dir):
-            return run_claudecode_task(task_prompt, work_dir, model_name=model)
-    elif agent == "openaicodex":
-        def agent_fn(task_prompt, work_dir):
-            return run_openaicodex_task(task_prompt, work_dir, model_name=model)
-    else:
-        agent_fn = None
+    if agent not in agent_registry:
+        raise ValueError(f"Unknown agent: {agent}. Available agents: {list(agent_registry.keys())}")
+
+    _, agent_task = agent_registry[agent]
+    def agent_fn(task_prompt, work_dir):
+        return agent_task(task_prompt, work_dir, model_name=model)
 
     try:
         runner = EvalRunner(eval_file, keep_workspace=keep_workspace, run_id=run_id)
@@ -65,42 +67,19 @@ def main():
 @click.argument("eval_path", type=click.Path(exists=True))
 @click.option("--keep-workspace", is_flag=True, help="Keep the workspace directory after completion")
 @click.option("--verbose", "-v", is_flag=True, help="Verbose output")
-@click.option("--agent", type=click.Choice(["minisweagent", "claudecode", "openaicodex"]), default=None, help="Agent to use for evaluation")
+@click.option("--agent", type=click.Choice(list(agent_registry.keys())), default=None, help="Agent to use for evaluation")
 @click.option("--model", default=None, help="Model name for agent")
 def run(eval_path, keep_workspace, verbose, agent, model):
     click.echo(f"Running evaluation: {eval_path}")
 
     runner = EvalRunner(eval_path, keep_workspace=keep_workspace)
 
-    if agent == "minisweagent":
-        click.echo(f"Using mini-swe-agent{f' with model: {model}' if model else ''}")
+    if agent and agent in agent_registry:
+        agent_name, agent_task = agent_registry[agent]
+        click.echo(f"Using {agent_name}{f' with model: {model}' if model else ''}")
 
         def agent_fn(task_prompt, work_dir):
-            return run_minisweagent_task(task_prompt, work_dir, model_name=model)
-
-        result = runner.run(agent_function=agent_fn)
-
-        if result.get("passed"):
-            click.echo("\n✓ Evaluation PASSED")
-        else:
-            click.echo("\n✗ Evaluation FAILED")
-    elif agent == "claudecode":
-        click.echo(f"Using Claude Code{f' with model: {model}' if model else ''}")
-
-        def agent_fn(task_prompt, work_dir):
-            return run_claudecode_task(task_prompt, work_dir, model_name=model)
-
-        result = runner.run(agent_function=agent_fn)
-
-        if result.get("passed"):
-            click.echo("\n✓ Evaluation PASSED")
-        else:
-            click.echo("\n✗ Evaluation FAILED")
-    elif agent == "openaicodex":
-        click.echo(f"Using OpenAI Codex{f' with model: {model}' if model else ''}")
-
-        def agent_fn(task_prompt, work_dir):
-            return run_openaicodex_task(task_prompt, work_dir, model_name=model)
+            return agent_task(task_prompt, work_dir, model_name=model)
 
         result = runner.run(agent_function=agent_fn)
 
@@ -125,7 +104,7 @@ def run(eval_path, keep_workspace, verbose, agent, model):
 
 @main.command()
 @click.argument("eval_dir", type=click.Path(exists=True))
-@click.option("--agent", type=click.Choice(["minisweagent", "claudecode", "openaicodex"]), default=None, help="Agent to use for evaluation")
+@click.option("--agent", type=click.Choice(list(agent_registry.keys())), default=None, help="Agent to use for evaluation")
 @click.option("--model", default=None, help="Model name for agent")
 @click.option("--output", "-o", type=click.Path(), help="Output directory for results")
 @click.option("--parallel", "-p", type=int, default=1, help="Number of parallel workers")
@@ -219,17 +198,12 @@ def batch(eval_dir, agent, model, output, parallel, keep_workspace):
             try:
                 runner = EvalRunner(eval_file, keep_workspace=keep_workspace, run_id=run_id)
 
-                if agent == "minisweagent":
-                    def agent_fn(task_prompt, work_dir):
-                        return run_minisweagent_task(task_prompt, work_dir, model_name=model)
-                elif agent == "claudecode":
-                    def agent_fn(task_prompt, work_dir):
-                        return run_claudecode_task(task_prompt, work_dir, model_name=model)
-                elif agent == "openaicodex":
-                    def agent_fn(task_prompt, work_dir):
-                        return run_openaicodex_task(task_prompt, work_dir, model_name=model)
-                else:
-                    agent_fn = None
+                if agent not in agent_registry:
+                    raise ValueError(f"Unknown agent: {agent}. Available agents: {list(agent_registry.keys())}")
+
+                _, agent_task = agent_registry[agent]
+                def agent_fn(task_prompt, work_dir):
+                    return agent_task(task_prompt, work_dir, model_name=model)
 
                 result = runner.run(agent_function=agent_fn)
                 duration = time.time() - start_time

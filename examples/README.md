@@ -1,8 +1,10 @@
 # scBench Canonical Examples
 
-This directory provides easy access to the 7 canonical evaluations with their trajectories. These examples cover one problem from each task category, all using the Chromium platform.
+This directory provides easy access to 30 canonical evaluations across 5 platforms. Each platform includes one evaluation per task category where available.
 
-## Canonical Evaluations
+## Canonical Evaluations by Platform
+
+### Chromium (7 evals)
 
 | Task | Eval ID | Description |
 |------|---------|-------------|
@@ -13,6 +15,49 @@ This directory provides easy access to the 7 canonical evaluations with their tr
 | Cell Typing | `chromium_celltyping_01_4t1_compartment_fractions` | Annotate cell type fractions |
 | Diff. Expression | `chromium_de_01_contractile_caf_marker_recovery` | Recover marker genes |
 | Trajectory | `chromium_trajectory_01_caf_terminal_marker_recovery` | Pseudotime analysis |
+
+### CSGenetics (6 evals)
+
+| Task | Eval ID | Description |
+|------|---------|-------------|
+| QC | `csgenetics_qc_filtering` | Filter cells from PBMC data |
+| Normalization | `csgenetics_normalization_full_pipeline` | Full normalization pipeline |
+| Dim. Reduction | `csgenetics_pca_pc1_biological_axis` | Interpret PC1 biological axis |
+| Clustering | `csgenetics_clustering_avg_purity` | Measure average cluster purity |
+| Cell Typing | `csgenetics_celltyping_major_immune_lineages` | Identify major immune lineages |
+| Diff. Expression | `csgenetics_de_monocyte_pseudobulk` | Monocyte pseudobulk DE analysis |
+
+### Illumina (6 evals)
+
+| Task | Eval ID | Description |
+|------|---------|-------------|
+| QC | `illumina_qc_report_initial_nuclei` | Report nuclei count after filtering |
+| Normalization | `illumina_normalization_cp10k_log1p` | CP10K + log1p normalization |
+| Dim. Reduction | `illumina_dimred_choose_batch_key` | Choose batch correction key |
+| Clustering | `illumina_clustering_leiden_n_clusters` | Leiden clustering count |
+| Cell Typing | `illumina_celltyping_major_cell_types` | Identify major cell types |
+| Diff. Expression | `illumina_de_edn1_maximal` | EDN1 maximal expression test |
+
+### MissionBio (6 evals)
+
+| Task | Eval ID | Description |
+|------|---------|-------------|
+| QC | `missionbio_qc_variant_call_rate` | Variant call rate metrics |
+| Normalization | `missionbio_normalization_protein_integrity` | Protein normalization integrity |
+| Dim. Reduction | `missionbio_dimred_normalization_choice` | Normalization method choice |
+| Clustering | `missionbio_clustering_n_clusters` | Count clusters from Louvain |
+| Cell Typing | `missionbio_celltyping_present_cell_types` | Identify present cell types |
+| Diff. Expression | `missionbio_de_mutation_frequency` | Differential mutation frequency |
+
+### ParseBio (5 evals)
+
+| Task | Eval ID | Description |
+|------|---------|-------------|
+| Normalization | `parsebio_normalization_edge_decision` | Edge normalization decision |
+| Dim. Reduction | `parsebio_pca_pc1_primary_driver` | PC1 primary driver interpretation |
+| Clustering | `parsebio_clustering_celltype_purity` | Cell type purity assessment |
+| Cell Typing | `parsebio_celltyping_coarse_distribution` | Coarse cell type distribution |
+| Diff. Expression | `parsebio_de_ifnb_cd14mono_markers` | IFN-beta CD14 monocyte markers |
 
 ## Directory Structure
 
@@ -27,51 +72,6 @@ examples/
     ├── common_failures/
     └── edge_cases/
 ```
-
-## Accessing Trajectories
-
-Full trajectories are stored in `trajectories/minisweagent/`. To find results for a canonical eval:
-
-```bash
-# Find results for the QC canonical example
-grep -r "chromium_qc_4T1_filter_cells" trajectories/minisweagent/chromium/minisweagent/qc/*/results.json
-
-# View a specific model's result
-cat trajectories/minisweagent/chromium/minisweagent/qc/anthropic_claude-opus-4-5_r1/results.json | \
-  jq '.results[] | select(.eval == "chromium_qc_4T1_filter_cells")'
-```
-
-## Trajectory Data Location
-
-```
-trajectories/minisweagent/
-└── chromium/
-    └── minisweagent/
-        ├── qc/
-        │   ├── anthropic_claude-opus-4-5_r1/
-        │   │   ├── results.json       # Eval outcomes with grader output
-        │   │   └── workspaces/        # Per-eval execution artifacts
-        │   ├── anthropic_claude-opus-4-5_r2/
-        │   ├── ...
-        │   └── xai_grok-4-fast-reasoning_r3/
-        ├── normalization/
-        ├── dimensionality_reduction/
-        ├── clustering/
-        ├── cell_typing/
-        ├── differential_expression/
-        └── trajectory_analysis/
-```
-
-## Results Format
-
-Each `results.json` contains:
-- `metadata`: Model, run ID, timestamp, aggregate stats
-- `by_task` / `by_kit`: Breakdown summaries
-- `results[]`: Per-eval outcomes including:
-  - `eval`: Evaluation ID
-  - `passed`: Boolean outcome
-  - `grader_result`: Detailed metrics and reasoning
-  - `duration_s`, `total_cost`, `n_steps`
 
 ## Eval Definition Format
 

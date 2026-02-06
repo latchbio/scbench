@@ -1,31 +1,35 @@
 # scBench
 
-**Can AI agents analyze real-world single-cell data?**
+**Evaluating AI Agents on Single-Cell RNA-seq Analysis**
 
-SCBench is a benchmark of verifiable problems derived from practical single-cell RNA-seq workflows. Each problem snapshots an analysis state immediately before a target step and pairs it with a deterministic grader that evaluates recovery of a key biological result.
+scBench is a benchmark of 394 verifiable problems derived from practical single-cell RNA-seq workflows. Each problem pairs a data snapshot (AnnData `.h5ad`) with a natural-language task prompt and a deterministic grader that maps the agent's structured output to pass/fail.
 
 ## Key Findings
 
-| Model | Accuracy | Cost/Eval | Latency |
-|-------|----------|-----------|---------|
-| Opus-4.5 | 50.0% | $0.39 | 275s |
-| GPT-5.2 | 46.6% | $0.04 | 89s |
-| Sonnet-4.5 | 41.4% | $0.08 | 116s |
-| Gemini-2.5-Pro | 41.1% | $0.19 | 194s |
+| Model | Accuracy | 95% CI | Latency |
+|-------|----------|--------|---------|
+| Claude Opus 4.6 | 52.8% | (48.3, 57.2) | 303s |
+| Claude Opus 4.5 | 49.9% | (45.3, 54.4) | 154s |
+| GPT-5.2 | 45.2% | (40.9, 49.5) | 133s |
+| Claude Sonnet 4.5 | 44.2% | (39.9, 48.6) | 193s |
+| GPT-5.1 | 37.9% | (33.7, 42.0) | 94s |
+| Grok-4.1 | 35.6% | (31.6, 39.7) | 180s |
+| Grok-4 | 33.9% | (30.1, 37.8) | 203s |
+| Gemini 2.5 Pro | 29.2% | (25.6, 32.9) | 300s |
 
-Full results with 95% confidence intervals are in [`results/`](results/).
+Full results with per-task and per-platform breakdowns are in [`results/`](results/).
 
 ## Benchmark Structure
 
-Evaluations across:
-- **6 platforms**: Chromium, BD Rhapsody, Parse, Illumina, MissionBio, CSGenetics
+394 evaluations across:
+- **6 platforms**: BD Rhapsody, Chromium, CSGenetics, Illumina, MissionBio, ParseBio
 - **7 task categories**: QC, Normalization, Dimensionality Reduction, Clustering, Cell Typing, Differential Expression, Trajectory Analysis
 
-Tasks require empirical interaction with the data—agents that rely on prior knowledge without performing the requisite analysis fail to complete many tasks correctly.
+Tasks require empirical interaction with the data—agents that rely on prior knowledge without performing the requisite analysis fail.
 
 ## Canonical Examples
 
-This repository includes canonical examples in [`evals_canonical/`](evals_canonical/) demonstrating the evaluation format. The full benchmark is withheld to prevent overfitting.
+Seven canonical examples (one per task category) are in [`evals_canonical/`](evals_canonical/) with organized access via [`examples/`](examples/). The full 394-evaluation benchmark is withheld to prevent training contamination.
 
 | Task | Platform | Grader |
 |------|----------|--------|
@@ -83,7 +87,12 @@ See [eval-graders](https://github.com/latchbio/eval-graders) for implementations
 ## Citation
 
 ```bibtex
-TODO
+@article{scbench2026,
+  title={scBench: Evaluating AI Agents on Single-Cell RNA-seq Analysis},
+  author={Workman, Kenny and Yang, Zhen and Muralidharan, Harihara and Abdulali, Aidan and Le, Hannah},
+  year={2026},
+  note={LatchBio}
+}
 ```
 
 ## License

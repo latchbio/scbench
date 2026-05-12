@@ -2,44 +2,51 @@
 
 **Evaluating AI Agents on Single-Cell RNA-seq Analysis**
 
-scBench is a benchmark of 394 verifiable problems derived from practical single-cell RNA-seq workflows. Each problem pairs a data snapshot (AnnData `.h5ad`) with a natural-language task prompt and a deterministic grader that maps the agent's structured output to pass/fail.
+scBench is a benchmark of 195 verifiable problems derived from practical single-cell RNA-seq workflows. Each problem pairs a data snapshot (AnnData `.h5ad`) with a natural-language task prompt and a deterministic grader that maps the agent's structured output to pass/fail.
 
 ## Key Findings
 
-| Model | Accuracy | 95% CI | Latency |
-|-------|----------|--------|---------|
-| Claude Opus 4.6 | 52.8% | (48.3, 57.2) | 303s |
-| Claude Opus 4.5 | 49.9% | (45.3, 54.4) | 154s |
-| GPT-5.2 | 45.2% | (40.9, 49.5) | 133s |
-| Claude Sonnet 4.5 | 44.2% | (39.9, 48.6) | 193s |
-| GPT-5.1 | 37.9% | (33.7, 42.0) | 94s |
-| Grok-4.1 | 35.6% | (31.6, 39.7) | 180s |
-| Grok-4 | 33.9% | (30.1, 37.8) | 203s |
-| Gemini 2.5 Pro | 29.2% | (25.6, 32.9) | 300s |
+| model_name | harness | Accuracy (%) | Cost ($) |
+|---|---|---:|---:|
+| gpt-5.5 | mini-swe-agent | 57.95 | 1.1136 |
+| gpt-5.5 | openai-codex | 57.78 | 2.4685 |
+| gpt-5.4 | mini-swe-agent | 57.44 | 0.8240 |
+| claude-opus-4-7 | mini-swe-agent | 55.21 | 1.5378 |
+| claude-opus-4-7 | claude-code | 54.02 | 1.1465 |
+| gemini-3.1-pro-preview | mini-swe-agent | 53.85 | 0.8948 |
+| claude-opus-4-6 | mini-swe-agent | 52.65 | 1.1917 |
+| gpt-5.2 | mini-swe-agent | 52.31 | 0.8874 |
+| claude-sonnet-4-6 | mini-swe-agent | 50.26 | 0.9872 |
+| claude-opus-4-5 | mini-swe-agent | 47.18 | 0.6553 |
+| grok-4.20-beta-0309-reasoning | mini-swe-agent | 44.44 | 0.2957 |
+| grok-4.3 | mini-swe-agent | 44.27 | 0.2147 |
+| gpt-5.1 | mini-swe-agent | 38.80 | 0.2177 |
+| claude-sonnet-4-5 | mini-swe-agent | 33.16 | 0.2682 |
+| grok-4-1-fast-reasoning | mini-swe-agent | 30.26 | 0.0282 |
+| gemini-2.5-pro | mini-swe-agent | 23.59 | 0.1368 |
 
 Full results with per-task and per-platform breakdowns are in [`results/`](results/).
 
 ## Benchmark Structure
 
-394 evaluations across:
+195 evaluations across:
 - **6 platforms**: BD Rhapsody, Chromium, CSGenetics, Illumina, MissionBio, ParseBio
-- **7 task categories**: QC, Normalization, Dimensionality Reduction, Clustering, Cell Typing, Differential Expression, Trajectory Analysis
+- **6 task categories**: QC, Normalization, Dimensionality Reduction, Clustering, Cell Typing, Differential Expression
 
 Tasks require empirical interaction with the data—agents that rely on prior knowledge without performing the requisite analysis fail.
 
 ## Canonical Examples
 
-Seven canonical examples (one per task category) are in [`evals_canonical/`](evals_canonical/) with organized access via [`examples/`](examples/). The full 394-evaluation benchmark is withheld to prevent training contamination.
+Six canonical examples are in [`evals/`](evals/). The sample covers all current platforms and task categories. The full 195-evaluation benchmark is withheld to prevent training contamination.
 
-| Task | Platform | Grader |
-|------|----------|--------|
-| QC | Chromium | Numeric |
-| Normalization | Chromium | Numeric |
-| Dimensionality Reduction | Chromium | MCQ |
-| Clustering | Chromium | MCQ |
-| Cell Typing | Chromium | Cosine |
-| Differential Expression | Chromium | P@K |
-| Trajectory Analysis | Chromium | P@K |
+| Task | Platform | Eval |
+|---|---|---|
+| QC | BD Rhapsody | `bd_rhapsody_tnbc_panel_aware_qc` |
+| Dimensionality Reduction | Chromium | `dr_05_pca_preprocessing_sentinels` |
+| Normalization | CS Genetics | `NRM01_sparse_normalization` |
+| Cell Typing | Illumina snRNA | `T04a_endothelin_niche_sources` |
+| Clustering | Mission Bio Tapestri | `tapestri_ccus_clustering_12_largest_mutant_clone` |
+| Differential Expression | Parse Bio | `DE01_pseudobulk_de` |
 
 ## Quick Start
 
@@ -47,11 +54,11 @@ Seven canonical examples (one per task category) are in [`evals_canonical/`](eva
 pip install -e .
 
 # Validate an evaluation
-scbench validate evals_canonical/chromium/chromium_qc_4T1_filter_cells.json
+scbench validate evals/qc/bd_rhapsody_tnbc_panel_aware_qc.json
 
 # Run with mini-swe-agent
 export ANTHROPIC_API_KEY=your_key
-scbench run evals_canonical/chromium/chromium_qc_4T1_filter_cells.json --agent minisweagent --model anthropic/claude-opus-4-5
+scbench run evals/qc/bd_rhapsody_tnbc_panel_aware_qc.json --agent minisweagent --model anthropic/claude-opus-4-5
 ```
 
 ### Custom Agent
@@ -61,11 +68,15 @@ from scbench import EvalRunner
 
 def my_agent(task_prompt, work_dir):
     import json
-    answer = {"cells_after_filtering": 6355}
+    answer = {
+        "n_pbmcs_retained": 14346,
+        "median_genes_per_pbmc": 68,
+        "n_monocytes_pbmc": 2592,
+    }
     (work_dir / "eval_answer.json").write_text(json.dumps(answer))
     return answer
 
-runner = EvalRunner("evals_canonical/chromium/chromium_qc_4T1_filter_cells.json")
+runner = EvalRunner("evals/qc/bd_rhapsody_tnbc_panel_aware_qc.json")
 result = runner.run(agent_function=my_agent)
 print(f"Passed: {result['passed']}")
 ```
@@ -82,7 +93,7 @@ Five grader families handle different answer types:
 | LabelSetJaccard | Cell type sets |
 | DistributionComparison | Cell type proportions |
 
-See [eval-graders](https://github.com/latchbio/eval-graders) for implementations.
+See [latch-eval-tools](https://github.com/latchbio/latch-eval-tools) for implementations.
 
 ## Citation
 

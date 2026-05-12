@@ -15,7 +15,7 @@ This guide describes how to create new evaluations for SCBench.
 Upload your dataset to Latch Data and note the node ID:
 
 ```
-latch://157798549.node
+latch://203298116.node
 ```
 
 ### 2. Create Evaluation JSON
@@ -24,7 +24,7 @@ latch://157798549.node
 {
   "id": "chromium_task_description_version",
   "task": "Detailed task description...",
-  "data_node": "latch://157798549.node",
+  "data_node": "latch://203298116.node",
   "grader": {
     "type": "numeric_tolerance",
     "config": {

@@ -13,6 +13,7 @@ class TestCase(BaseModel):
     id: str
     task: str
     data_node: str | list[str] | None = None
+    canary: str | None = None
     grader: dict | None = None
     timeout: int | None = None
     download_timeout: int | None = None

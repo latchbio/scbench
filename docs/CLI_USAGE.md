@@ -15,7 +15,7 @@ scbench run path/to/eval.json --agent minisweagent --model anthropic/claude-opus
 ```
 
 Options:
-- `--agent`: Agent to use (`minisweagent`, `claudecode`)
+- `--agent`: Agent to use (`minisweagent`, `claudecode`, `openaicodex`)
 - `--model`: Model name
 - `--keep-workspace`: Keep workspace after completion
 - `--verbose`: Verbose output
@@ -23,7 +23,7 @@ Options:
 ### Run Batch Evaluations
 
 ```bash
-scbench batch evals_canonical/ --agent minisweagent --model anthropic/claude-opus-4-5 --output results/
+scbench batch evals/ --agent minisweagent --model anthropic/claude-opus-4-5 --output results/
 ```
 
 Options:
@@ -43,7 +43,7 @@ scbench validate path/to/eval.json
 
 ```bash
 scbench list
-scbench list --category qc
+scbench list --platform bd_rhapsody
 ```
 
 ### Generate Leaderboard
@@ -56,4 +56,6 @@ scbench leaderboard results/ --output leaderboard.json
 
 - `ANTHROPIC_API_KEY`: Required for Claude models
 - `OPENAI_API_KEY`: Required for OpenAI models
+- `GEMINI_API_KEY`: Required for Gemini models
+- `XAI_API_KEY`: Required for xAI models
 - `MSWEA_MODEL_NAME`: Default model for mini-swe-agent

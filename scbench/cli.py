@@ -97,7 +97,7 @@ def run(eval_path, keep_workspace, verbose, agent, model):
         click.echo("  runner = EvalRunner(eval_path)")
         click.echo("  runner.run(agent_function=my_agent)")
         click.echo("\nOr use mini-swe-agent:")
-        click.echo("  scbench run evals/qc/chromium_qc_basic.json --agent minisweagent")
+        click.echo("  scbench run evals/qc/bd_rhapsody_tnbc_panel_aware_qc.json --agent minisweagent")
 
         result = runner.run()
 
@@ -362,38 +362,28 @@ def list_evals(platform):
     click.echo("SCBench Evaluations")
     click.echo("=" * 50)
 
-    from pathlib import Path
-
     package_dir = Path(__file__).parent.parent
-    evals_dir = package_dir / "evals_canonical"
+    evals_dir = package_dir / "evals"
 
     if not evals_dir.exists():
         click.echo("No evaluations found")
         return
 
-    platforms = ["chromium", "bd_rhapsody", "parse", "illumina", "missionbio", "csgenetics"]
-
-    for plat in platforms:
-        if platform and plat != platform:
+    evals_by_platform = {}
+    for eval_file in sorted(evals_dir.rglob("*.json")):
+        if eval_file.name == "manifest.json":
             continue
-
-        plat_dir = evals_dir / plat
-        if not plat_dir.exists():
+        eval_data = json.loads(eval_file.read_text())
+        kit = eval_data["metadata"]["kit"]
+        if platform and kit != platform:
             continue
+        evals_by_platform.setdefault(kit, []).append(eval_data["id"])
 
-        eval_files = list(plat_dir.glob("*.json"))
-        if not eval_files:
-            continue
-
-        click.echo(f"\n{plat.replace('_', ' ').title()} ({len(eval_files)})")
+    for kit, eval_ids in sorted(evals_by_platform.items()):
+        click.echo(f"\n{kit.replace('_', ' ').title()} ({len(eval_ids)})")
         click.echo("-" * 50)
-
-        for eval_file in sorted(eval_files):
-            try:
-                eval_data = json.loads(eval_file.read_text())
-                click.echo(f"  • {eval_data['id']}")
-            except:
-                click.echo(f"  • {eval_file.stem}")
+        for eval_id in sorted(eval_ids):
+            click.echo(f"  • {eval_id}")
 
 
 if __name__ == "__main__":

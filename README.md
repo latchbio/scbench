@@ -36,7 +36,7 @@ Full results with per-task and per-platform breakdowns are in [`results/`](resul
 - **6 platforms**: BD Rhapsody, Chromium, CSGenetics, Illumina, MissionBio, ParseBio
 - **6 task categories**: QC, Normalization, Dimensionality Reduction, Clustering, Cell Typing, Differential Expression
 
-Tasks require empirical interaction with the data—agents that rely on prior knowledge without performing the requisite analysis fail.
+Tasks require empirical interaction with the agents that rely on prior knowledge without performing the requisite analysis fail.
 
 ## Canonical Examples
 

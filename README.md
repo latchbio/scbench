@@ -8,9 +8,12 @@ scBench is a benchmark of 195 verifiable problems derived from practical single-
 
 | model_name | harness | Accuracy (%) | Cost ($) |
 |---|---|---:|---:|
+| claude-opus-4-8 | claude-code | 57.95 | 1.4792 |
 | gpt-5.5 | mini-swe-agent | 57.95 | 1.1136 |
 | gpt-5.5 | openai-codex | 57.78 | 2.4685 |
+| claude-opus-4-8 | mini-swe-agent | 57.44 | 1.7000 |
 | gpt-5.4 | mini-swe-agent | 57.44 | 0.8240 |
+| gemini-3.5-flash | pi | 56.92 | 1.7708 |
 | claude-opus-4-7 | mini-swe-agent | 55.21 | 1.5378 |
 | claude-opus-4-7 | claude-code | 54.02 | 1.1465 |
 | gemini-3.1-pro-preview | mini-swe-agent | 53.85 | 0.8948 |
@@ -33,7 +36,7 @@ Full results with per-task and per-platform breakdowns are in [`results/`](resul
 - **6 platforms**: BD Rhapsody, Chromium, CSGenetics, Illumina, MissionBio, ParseBio
 - **6 task categories**: QC, Normalization, Dimensionality Reduction, Clustering, Cell Typing, Differential Expression
 
-Tasks require empirical interaction with the data—agents that rely on prior knowledge without performing the requisite analysis fail.
+Tasks require empirical interaction with the agents that rely on prior knowledge without performing the requisite analysis fail.
 
 ## Canonical Examples
 

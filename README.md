@@ -98,6 +98,10 @@ Five grader families handle different answer types:
 
 See [latch-eval-tools](https://github.com/latchbio/latch-eval-tools) for implementations.
 
+## Updated leaderboard
+
+For results from newer model-and-harness evaluations, see the [scBench leaderboard](https://benchmarks.bio/scbench), part of the [benchmarks.bio](https://benchmarks.bio/) suite.
+
 ## Citation
 
 ```bibtex

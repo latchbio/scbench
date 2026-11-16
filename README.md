@@ -4,7 +4,9 @@
 
 scBench is a benchmark of 195 verifiable problems derived from practical single-cell RNA-seq workflows. Each problem pairs a data snapshot (AnnData `.h5ad`) with a natural-language task prompt and a deterministic grader that maps the agent's structured output to pass/fail.
 
-## Key Findings
+See the [current scBench model rankings](https://benchmarks.bio/scbench) on [benchmarks.bio](https://benchmarks.bio/) for the latest model-and-harness results.
+
+## June 2026 results snapshot
 
 | model_name | harness | Accuracy (%) | Cost ($) |
 |---|---|---:|---:|
@@ -97,10 +99,6 @@ Five grader families handle different answer types:
 | DistributionComparison | Cell type proportions |
 
 See [latch-eval-tools](https://github.com/latchbio/latch-eval-tools) for implementations.
-
-## Updated leaderboard
-
-For results from newer model-and-harness evaluations, see the [scBench leaderboard](https://benchmarks.bio/scbench), part of the [benchmarks.bio](https://benchmarks.bio/) suite.
 
 ## Citation
 

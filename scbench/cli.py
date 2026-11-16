@@ -116,7 +116,9 @@ def batch(eval_dir, agent, model, output, parallel, keep_workspace):
     click.echo(f"Run ID: {run_id}")
 
     eval_dir = Path(eval_dir)
-    eval_files = list(eval_dir.rglob("*.json"))
+    eval_files = [
+        path for path in eval_dir.rglob("*.json") if path.name != "manifest.json"
+    ]
 
     click.echo(f"\nFound {len(eval_files)} evaluation(s)")
 
